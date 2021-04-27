@@ -3,35 +3,10 @@
 import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, workspace } from "vscode"
 import { platform } from "os"
 const exec = require("child-process-promise").exec
-const circleChars = ["◌", "◔", "◑", "◕", "◍"]
-const barChars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
-const recycleChars = ["♺", "♳", "♴", "♵", "♶", "♷", "♸", "♹"]
-const dieChars = ["⛶", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"]
-const clockChars = ["🕛", "🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚"]
-const lineChars = ["⎽", "⎼", "⎻", "⎺"]
-const pileChars = ["𝄖", "𝄗", "𝄘", "𝄙", "𝄚", "𝄛"]
-const digitChars = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-const circledigitChars = ["🄋", "➀", "➁", "➂", "➃", "➄", "➅", "➆", "➇", "➈"]
-const negativecircledigitChars = ["🄌", "➊", "➋", "➌", "➍", "➎", "➏", "➐", "➑", "➒"]
-const wanChars = ["🀆", "🀈", "🀉", "🀊", "🀋", "🀌", "🀍", "🀎", "🀏"]
-const tiaoChars = ["🀆", "🀐", "🀑", "🀒", "🀓", "🀔", "🀕", "🀖", "🀗", "🀘"]
-const bingChars = ["🀆", "🀙", "🀚", "🀛", "🀜", "🀝", "🀞", "🀟", "🀠", "🀡"]
-const drawtypes = {
-    circle: circleChars,
-    bar: barChars,
-    recycle: recycleChars,
-    die: dieChars,
-    clock: clockChars,
-    line: lineChars,
-    pile: pileChars,
-    digit: digitChars,
-    circledigit: circledigitChars,
-    negativecircledigit: negativecircledigitChars,
-    wan: wanChars,
-    tiao: tiaoChars,
-    bing: bingChars
-}
-const cmd = `nvidia-smi -q -d UTILIZATION | grep Gpu | sed 's/[Gpu%: ]//g'`
+
+const cmd_gpu_usage = `nvidia-smi -q -d UTILIZATION | grep Gpu | sed 's/[Gpu%: ]//g'`
+const cmd_total_memory = `nvidia-smi -q -d MEMORY | grep "FB Memory Usage" -A 3 | grep "Total" | sed 's/[Total%: %MiB]//g'`
+const cmd_used_memory = `nvidia-smi -q -d MEMORY | grep "FB Memory Usage" -A 3 | grep "Used" | sed 's/[Used%: ]//g'`
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
@@ -43,8 +18,8 @@ export async function activate(context: ExtensionContext) {
     // create a new word counter
     let nvidiasmi = new NvidiaSmi(0)
     try {
-        var res = await exec(cmd, { timeout: 999 })
-        var nCard = res.stdout.split("\n").filter(val => val).length
+        var gpu_usage = await exec(cmd_gpu_usage, { timeout: 999 })
+        var nCard = gpu_usage.stdout.split("\n").filter(val => val).length
         if (nCard > 0) {
             nvidiasmi.nCard = nCard
             nvidiasmi.startNvidiaSmi()
@@ -145,11 +120,9 @@ class NvidiaSmi {
 
         try {
             this.lock = true
-            var res = await exec(cmd, { timeout: 999 })
-            var levels = res.stdout.split("\n").filter(val => val)
-            var chars = this.indicator
-            var nlevel = chars.length - 1
-            var levelChars = levels.map(val => chars[Math.ceil((Number(val) / 100) * nlevel)])
+            var gpu_usage = await exec(cmd_gpu_usage, { timeout: 999 })
+            var used_memory = await exec(cmd_used_memory, { timeout: 999 })
+            var total_memory = await exec(cmd_total_memory, { timeout: 999 })
             this.lock = false
         } catch (e) {
             console.log(e)
@@ -157,8 +130,9 @@ class NvidiaSmi {
         }
 
         // Update the status bar
-        this._statusBarItem.text = levelChars.join("")
-        this._statusBarItem.tooltip = levels.map(val => `${val} %`).join("\n")
+        this._statusBarItem.text = "NVIDIA: " + gpu_usage + "% - " + used_memory + "/" + total_memory
+        this._statusBarItem.tooltip = this._statusBarItem.text
+
     }
 
     public async stopNvidiaSmi() {
