@@ -1,5 +1,5 @@
 # Change Log
-All notable changes to the "nvidia-smi" extension will be documented in this file.
+All notable changes to the "nvidia-monitoring" extension will be documented in this file.
 
 ### 0.2.0
 

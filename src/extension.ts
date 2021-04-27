@@ -13,7 +13,7 @@ const cmd_used_memory = `nvidia-smi -q -d MEMORY | grep "FB Memory Usage" -A 3 |
 export async function activate(context: ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error).
     // This line of code will only be executed once when your extension is activated.
-    console.log('Congratulations, your extension "nvidia-smi" is now active!')
+    console.log('Congratulations, your extension "nvidia-monitoring" is now active!')
 
     // create a new word counter
     let nvidiasmi = new NvidiaSmi(0)
@@ -29,23 +29,17 @@ export async function activate(context: ExtensionContext) {
         nvidiasmi.nCard = 0
     }
 
-    let updateCmd = commands.registerCommand("extension.nvidia-smi", () => {
+    let updateCmd = commands.registerCommand("extension.nvidia-monitoring", () => {
         nvidiasmi.updateNvidiaSmi()
     })
 
-    let stopCmd = commands.registerCommand("extension.stop_nvidia-smi", () => {
+    let stopCmd = commands.registerCommand("extension.stop_nvidia-monitoring", () => {
         nvidiasmi.stopNvidiaSmi()
     })
 
-    let startCmd = commands.registerCommand("extension.start_nvidia-smi", () => {
+    let startCmd = commands.registerCommand("extension.start_nvidia-monitoring", () => {
         nvidiasmi.startNvidiaSmi()
     })
-
-    context.subscriptions.push(
-        workspace.onDidChangeConfiguration(() => {
-            nvidiasmi.updateDrawtype()
-        })
-    )
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(nvidiasmi)
@@ -66,7 +60,6 @@ class NvidiaSmi {
         this.lock = false
         this.resetPatience()
         this.nCard = numCard
-        this.updateDrawtype()
     }
 
     get hasPatience(): boolean {
@@ -101,11 +94,6 @@ class NvidiaSmi {
 
     public resetPatience() {
         this._patience = 5
-    }
-
-    public updateDrawtype() {
-        var drawtype = workspace.getConfiguration("nvidia-smi").drawtype
-        this.indicator = drawtypes[drawtype]
     }
 
     public async updateNvidiaSmi() {

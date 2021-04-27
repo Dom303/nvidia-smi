@@ -1,12 +1,12 @@
 {
-    "name": "nvidia-smi",
-    "displayName": "nvidia-smi",
+    "name": "nvidia-monitoring",
+    "displayName": "nvidia-monitoring",
     "description": "Show GPU usage on status bar",
     "icon": "icon.png",
     "version": "0.2.0",
     "publisher": "innerlee",
     "license": "MIT",
-    "repository": "https://github.com/innerlee/nvidia-smi",
+    "repository": "https://github.com/innerlee/nvidia-monitoring",
     "engines": {
         "vscode": "^1.19.0"
     },
@@ -20,9 +20,9 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "Nvidia-smi GPU status configuration",
+            "title": "nvidia-monitoring GPU status configuration",
             "properties": {
-                "nvidia-smi.drawtype": {
+                "nvidia-monitoring.drawtype": {
                     "type": "string",
                     "default": "circle",
                     "description": "GPU indicator styles",
@@ -46,16 +46,16 @@
         },
         "commands": [
             {
-                "command": "extension.nvidia-smi",
-                "title": "Update nvidia-smi"
+                "command": "extension.nvidia-monitoring",
+                "title": "Update nvidia-monitoring"
             },
             {
-                "command": "extension.stop_nvidia-smi",
-                "title": "Stop nvidia-smi"
+                "command": "extension.stop_nvidia-monitoring",
+                "title": "Stop nvidia-monitoring"
             },
             {
-                "command": "extension.start_nvidia-smi",
-                "title": "Start nvidia-smi"
+                "command": "extension.start_nvidia-monitoring",
+                "title": "Start nvidia-monitoring"
             }
         ]
     },

@@ -1,8 +1,8 @@
-# nvidia-smi
+# nvidia-monitoring
 
 Shows the GPU usage at status bar.
 
-![nvidia-smi GPU stats shown](images/nvidia-smi.gif)
+![nvidia-monitoring GPU stats shown](images/nvidia-monitoring.gif)
 
 ## Styles
 
